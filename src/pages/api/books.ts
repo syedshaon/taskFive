@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { faker } from "@faker-js/faker";
 
+import { faker as fakerES } from "@faker-js/faker/locale/es";
+import { faker as fakerIT } from "@faker-js/faker/locale/it";
+
 // Helper function to normalize the region
 const normalizeRegion = (region: string): string => {
   const regionMap: Record<string, string> = {
@@ -11,49 +14,76 @@ const normalizeRegion = (region: string): string => {
   return regionMap[region] || region; // Default to original input if not mapped
 };
 
-// Generate realistic book titles based on region
+// Language-specific title generators
+const generateEnglishTitle = () => {
+  const prefixes = ["The", "A", "My", "Our"];
+  const subjects = ["Journey", "Secret", "Adventure", "Mystery"];
+  const descriptors = ["Forgotten", "Lost", "Hidden", "Ancient"];
+  return `${faker.helpers.arrayElement(prefixes)} ${faker.helpers.arrayElement(descriptors)} ${faker.helpers.arrayElement(subjects)}`;
+};
+
+const generateSpanishTitle = () => {
+  const prefixes = ["El", "La", "Los", "Las"];
+  const subjects = ["Viaje", "Secreto", "Aventura", "Misterio"];
+  const descriptors = ["Olvidado", "Perdido", "Oculto", "Antiguo"];
+  return `${fakerES.helpers.arrayElement(prefixes)} ${fakerES.helpers.arrayElement(descriptors)} ${fakerES.helpers.arrayElement(subjects)}`;
+};
+
+const generateItalianTitle = () => {
+  const prefixes = ["Il", "La", "Lo", "Gli"];
+  const subjects = ["Viaggio", "Segreto", "Avventura", "Mistero"];
+  const descriptors = ["Dimenticato", "Perduto", "Nascosto", "Antico"];
+  return `${fakerIT.helpers.arrayElement(prefixes)} ${fakerIT.helpers.arrayElement(descriptors)} ${fakerIT.helpers.arrayElement(subjects)}`;
+};
+
+// Language-specific description generators
+const generateEnglishDescription = () => {
+  return faker.lorem.paragraphs(2);
+};
+
+const generateSpanishDescription = () => {
+  return fakerES.lorem.paragraphs(2);
+};
+
+const generateItalianDescription = () => {
+  return fakerIT.lorem.paragraphs(2);
+};
+
+// Main generator functions
 const generateBookTitle = (language: string): string => {
-  if (language === "English") {
-    return faker.lorem.words(3); // Simple English titles
+  switch (language) {
+    case "Spanish":
+      return generateSpanishTitle();
+    case "Italian":
+      return generateItalianTitle();
+    default:
+      return generateEnglishTitle();
   }
-  if (language === "Spanish") {
-    return `es ${faker.lorem.word()}`; // Spanish-style titles
-  }
-  if (language === "Italian") {
-    return `it ${faker.lorem.words(2)}`; // Italian-style titles with subtitles
-  }
-  return faker.lorem.words(3); // Default case
 };
 
-// Function to generate realistic authors' names based on region
-const generateAuthorName = (language: string): string => {
-  if (language === "English") {
-    return faker.person.firstName() + " " + faker.person.lastName(); // English names
-  }
-  if (language === "Spanish") {
-    return faker.person.firstName() + " " + faker.person.lastName(); // Spanish names
-  }
-  if (language === "Italian") {
-    return faker.person.firstName() + " " + faker.person.lastName(); // Italian names
-  }
-  return faker.person.firstName() + " " + faker.person.lastName(); // Default case
-};
-
-// Generate book descriptions based on the selected language
 const generateBookDetails = (language: string): string => {
-  if (language === "English") {
-    return faker.lorem.paragraph(); // English descriptions
+  switch (language) {
+    case "Spanish":
+      return generateSpanishDescription();
+    case "Italian":
+      return generateItalianDescription();
+    default:
+      return generateEnglishDescription();
   }
-  if (language === "Spanish") {
-    // Spanish description using a mix of lorem and custom Spanish phrases
-    return `Este libro es una obra maestra, ofreciendo una vista increíble de ${faker.lorem.words(2)}. Una aventura inolvidable que cautiva a los lectores de principio a fin.`;
-  }
-  if (language === "Italian") {
-    // Italian description using a mix of lorem and custom Italian phrases
-    return `Questo libro è un capolavoro, offrendo una vista incredibile di ${faker.lorem.words(2)}. Un'avventura indimenticabile che cattura i lettori dall'inizio alla fine.`;
-  }
-  return faker.lorem.paragraph(); // Default case
 };
+
+const generateAuthorName = (language: string): string => {
+  switch (language) {
+    case "Spanish":
+      return `${fakerES.person.firstName()} ${fakerES.person.lastName()}`;
+    case "Italian":
+      return `${fakerIT.person.firstName()} ${fakerIT.person.lastName()}`;
+    default:
+      return `${faker.person.firstName()} ${faker.person.lastName()}`;
+  }
+};
+
+// Rest of your handler remains the same...
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { seed, page, region, likes, reviews, isbn } = req.query;
