@@ -13,11 +13,11 @@ interface BookState {
 
 export const useBookStore = create<BookState>((set) => ({
   seed: 42,
-  region: "en",
+  region: "english", // Change to match API expectations
   likes: 5,
   reviews: 5,
   setSeed: (seed) => set({ seed }),
-  setRegion: (region) => set({ region }),
+  setRegion: (region) => set({ region: region.toLowerCase() }), // Ensure lowercase
   setLikes: (likes) => set({ likes }),
   setReviews: (reviews) => set({ reviews }),
 }));
