@@ -22,10 +22,10 @@ interface BookDetails extends Book {
   description: string;
   publishedDate: string;
   pageCount: number;
-  language: string;
   coverImage: string;
   rating: number;
   reviews: Review[];
+  language: "English" | "Spanish" | "Italian";
 }
 
 export default function BookList() {
@@ -70,11 +70,16 @@ export default function BookList() {
   }, [seed, region, likes, reviews]); // ✅ Re-fetch when filters change
 
   const fetchBookDetails = async (isbn: string) => {
+    const query = new URLSearchParams();
+    query.append("region", region.toLowerCase()); // Ensure lowercase
+    query.append("isbn", isbn); // Ensure lowercase
     try {
-      const res = await fetch(`/api/books?isbn=${isbn}`);
+      const res = await fetch(`/api/books?${query.toString()}`); // Adjusted to use the correct API endpoint
+      // const res = await fetch(`/api/books?isbn=${isbn}&region=${selectedLanguage}`);
       if (!res.ok) throw new Error("Failed to fetch book details");
 
       const details = await res.json();
+      console.log("Details fetched..", details);
       setBookDetails((prevDetails) => ({
         ...prevDetails,
         [isbn]: details,
@@ -159,7 +164,7 @@ export default function BookList() {
                               <strong>Pages:</strong> {bookDetails[book.isbn].pageCount}
                             </p>
                             <p>
-                              <strong>Language:</strong> {bookDetails[book.isbn].language}
+                              <strong>Language:</strong> {bookDetails[book.isbn]?.language || "Unknown"}
                             </p>
                             <p>
                               <strong>Rating:</strong> ⭐ {bookDetails[book.isbn].rating} / 5
