@@ -1,5 +1,14 @@
 import { create } from "zustand";
 
+interface Book {
+  index: number;
+  isbn: string;
+  title: string;
+  author: string;
+  publisher: string;
+  language: string;
+  coverImage: string; // Added coverImage property
+}
 interface BookState {
   seed: number;
   region: string;
@@ -9,6 +18,15 @@ interface BookState {
   setRegion: (region: string) => void;
   setLikes: (likes: number) => void;
   setReviews: (reviews: number) => void;
+  viewMode: "table" | "gallery";
+  setViewMode: (mode: "table" | "gallery") => void;
+  coverImage: string;
+
+  isLoading: boolean;
+  books: Book[];
+  setBooks: (books: Book[]) => void;
+  appendBooks: (newBooks: Book[]) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export const useBookStore = create<BookState>((set) => ({
@@ -20,4 +38,13 @@ export const useBookStore = create<BookState>((set) => ({
   setRegion: (region) => set({ region: region.toLowerCase() }), // Ensure lowercase
   setLikes: (likes) => set({ likes }),
   setReviews: (reviews) => set({ reviews }),
+  viewMode: "table",
+  setViewMode: (mode) => set({ viewMode: mode }),
+  coverImage: "https://picsum.photos/200/300", // Default image
+
+  isLoading: false,
+  books: [],
+  setBooks: (books) => set({ books }),
+  appendBooks: (newBooks) => set((state) => ({ books: [...state.books, ...newBooks] })),
+  setLoading: (isLoading) => set({ isLoading }),
 }));
