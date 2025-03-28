@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useBookStore } from "@/store/bookStore";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
@@ -32,50 +32,56 @@ interface BookDetails extends Book {
 }
 
 export default function BookList() {
-  const { seed, region, likes, reviews, viewMode, books, setBooks, setLoading } = useBookStore();
-  // const [books, setBooks] = useState<Book[]>([]);
+  const { seed, region, likes, reviews, viewMode, books, setBooks, setLoading, appendBooks } = useBookStore();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [expandedBook, setExpandedBook] = useState<string | null>(null);
   const [bookDetails, setBookDetails] = useState<{ [isbn: string]: BookDetails }>({});
-  const [localBooks, setLocalBooks] = useState<Book[]>([]); // Local pagination state
-  const { appendBooks } = useBookStore(); // Use the append function from store
 
-  const fetchBooks = async (pageNumber: number) => {
-    try {
-      setLoading(true); // Set loading state
-      const query = new URLSearchParams();
-      query.append("seed", seed.toString());
-      query.append("region", region.toLowerCase()); // Ensure lowercase
-      query.append("likes", likes.toString());
-      query.append("reviews", reviews.toString());
-      query.append("page", pageNumber.toString());
+  // Wrap fetchBooks in useCallback to prevent unnecessary recreations
+  const fetchBooks = useCallback(
+    async (pageNumber: number) => {
+      try {
+        setLoading(true);
+        const query = new URLSearchParams();
+        query.append("seed", seed.toString());
+        query.append("region", region.toLowerCase());
+        query.append("likes", likes.toString());
+        query.append("reviews", reviews.toString());
+        query.append("page", pageNumber.toString());
 
-      // console.log("Fetching books with query:", query.toString()); // Debugging
+        const res = await fetch(`/api/books?${query.toString()}`);
+        const newBooks: Book[] = await res.json();
 
-      const res = await fetch(`/api/books?${query.toString()}`);
-      const newBooks: Book[] = await res.json();
-
-      console.log("Books fetched:", newBooks); // Debugging
-
-      setLocalBooks((prev) => [...prev, ...newBooks]); // Correct updater function
-      appendBooks(newBooks); // Use store's append function
-
-      setHasMore(newBooks.length > 0);
-      setPage(pageNumber + 1);
-    } catch (error) {
-      console.error("Failed to fetch books:", error);
-      setHasMore(false);
-    }
-  };
+        setBooks([...useBookStore.getState().books, ...newBooks]);
+        appendBooks(newBooks);
+        setHasMore(newBooks.length > 0);
+        setPage(pageNumber + 1);
+      } catch (error) {
+        console.error("Failed to fetch books:", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [seed, region, likes, reviews, setLoading, setBooks, appendBooks]
+  );
 
   useEffect(() => {
-    setBooks([]); // ✅ Clear previous books
-    setBookDetails({}); // ✅ Clear previous details
+    setBooks([]);
+    setBookDetails({});
     setPage(1);
     setHasMore(true);
     fetchBooks(1);
-  }, [seed, region, likes, reviews]); // ✅ Re-fetch when filters change
+  }, [fetchBooks, setBooks]); // Now fetchBooks is stable between renders
+
+  // useEffect(() => {
+  //   setBooks([]); // ✅ Clear previous books
+  //   setBookDetails({}); // ✅ Clear previous details
+  //   setPage(1);
+  //   setHasMore(true);
+  //   fetchBooks(1);
+  // }, [seed, region, likes, reviews, fetchBooks, setBooks]); // ✅ Re-fetch when filters change
 
   const fetchBookDetails = async (isbn: string) => {
     const query = new URLSearchParams();
