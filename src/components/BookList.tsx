@@ -53,8 +53,18 @@ export default function BookList() {
         const res = await fetch(`/api/books?${query.toString()}`);
         const newBooks: Book[] = await res.json();
 
-        setBooks([...useBookStore.getState().books, ...newBooks]);
-        appendBooks(newBooks);
+        console.log("old books :", useBookStore.getState().books);
+        console.log("new books :", newBooks);
+
+        // if there are old books(useBookStore.getState().books) then new book's index should start after old books when setting new books
+        const newBooksWithIndex = newBooks.map((book, index) => ({
+          ...book,
+          index: useBookStore.getState().books.length + index + 1, // Adjust index based on existing books
+        }));
+
+        setBooks([...useBookStore.getState().books, ...newBooksWithIndex]);
+
+        // appendBooks(newBooks);
         setHasMore(newBooks.length > 0);
         setPage(pageNumber + 1);
       } catch (error) {

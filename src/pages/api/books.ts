@@ -122,25 +122,25 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // If the number of books found is less than 20, generate more of the same language
-  if (books.length < 20) {
-    const remainingBooksToGenerate = 20 - books.length;
+  // if (books.length < 20) {
+  //   const remainingBooksToGenerate = 20 - books.length;
 
-    // Generate additional books of the same language
-    const additionalBooks = Array.from({ length: remainingBooksToGenerate }).map((_, i) => ({
-      index: books.length + i + 1,
-      isbn: faker.string.numeric(10),
-      title: generateBookTitle(languageToGenerate),
-      author: generateAuthorName(languageToGenerate),
-      publisher: faker.company.name(),
-      coverImage: faker.image.urlPicsumPhotos({ width: 200, height: 300 }),
-      language: languageToGenerate, // Ensure these are of the same language
-      likes: Math.random() < likesProbability / 10 ? Math.floor(Math.random() * 10) : 0,
-      reviews: Math.random() < reviewsProbability / 10 ? Math.floor(Math.random() * 10) : 0,
-    }));
+  //   // Generate additional books of the same language
+  //   const additionalBooks = Array.from({ length: remainingBooksToGenerate }).map((_, i) => ({
+  //     index: books.length + i + 1,
+  //     isbn: faker.string.numeric(10),
+  //     title: generateBookTitle(languageToGenerate),
+  //     author: generateAuthorName(languageToGenerate),
+  //     publisher: faker.company.name(),
+  //     coverImage: faker.image.urlPicsumPhotos({ width: 200, height: 300 }),
+  //     language: languageToGenerate, // Ensure these are of the same language
+  //     likes: Math.random() < likesProbability / 10 ? Math.floor(Math.random() * 10) : 0,
+  //     reviews: Math.random() < reviewsProbability / 10 ? Math.floor(Math.random() * 10) : 0,
+  //   }));
 
-    // Append the additional books to the existing ones
-    books = [...books, ...additionalBooks];
-  }
+  //   // Append the additional books to the existing ones
+  //   books = [...books, ...additionalBooks];
+  // }
 
   res.status(200).json(books);
 }

@@ -35,7 +35,13 @@ export const useBookStore = create<BookState>((set) => ({
   likes: 5,
   reviews: 5,
   setSeed: (seed) => set({ seed }),
-  setRegion: (region) => set({ region: region.toLowerCase() }), // Ensure lowercase
+  // In your store actions
+  setRegion: (region) =>
+    set({
+      region: region.toLowerCase(),
+      books: [], // Clear books when language changes
+      isLoading: false,
+    }),
   setLikes: (likes) => set({ likes }),
   setReviews: (reviews) => set({ reviews }),
   viewMode: "table",
