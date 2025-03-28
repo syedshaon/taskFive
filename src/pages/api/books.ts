@@ -4,6 +4,8 @@ import { faker } from "@faker-js/faker";
 import { faker as fakerES } from "@faker-js/faker/locale/es";
 import { faker as fakerIT } from "@faker-js/faker/locale/it";
 
+import { generateSpanishTitle, generateEnglishTitle, generateItalianTitle } from "./titleGenerator";
+
 // Helper function to normalize the region
 const normalizeRegion = (region: string): string => {
   const regionMap: Record<string, string> = {
@@ -12,28 +14,6 @@ const normalizeRegion = (region: string): string => {
     it: "Italian",
   };
   return regionMap[region] || region; // Default to original input if not mapped
-};
-
-// Language-specific title generators
-const generateEnglishTitle = () => {
-  const prefixes = ["The", "A", "My", "Our"];
-  const subjects = ["Journey", "Secret", "Adventure", "Mystery"];
-  const descriptors = ["Forgotten", "Lost", "Hidden", "Ancient"];
-  return `${faker.helpers.arrayElement(prefixes)} ${faker.helpers.arrayElement(descriptors)} ${faker.helpers.arrayElement(subjects)}`;
-};
-
-const generateSpanishTitle = () => {
-  const prefixes = ["El", "La", "Los", "Las"];
-  const subjects = ["Viaje", "Secreto", "Aventura", "Misterio"];
-  const descriptors = ["Olvidado", "Perdido", "Oculto", "Antiguo"];
-  return `${fakerES.helpers.arrayElement(prefixes)} ${fakerES.helpers.arrayElement(descriptors)} ${fakerES.helpers.arrayElement(subjects)}`;
-};
-
-const generateItalianTitle = () => {
-  const prefixes = ["Il", "La", "Lo", "Gli"];
-  const subjects = ["Viaggio", "Segreto", "Avventura", "Mistero"];
-  const descriptors = ["Dimenticato", "Perduto", "Nascosto", "Antico"];
-  return `${fakerIT.helpers.arrayElement(prefixes)} ${fakerIT.helpers.arrayElement(descriptors)} ${fakerIT.helpers.arrayElement(subjects)}`;
 };
 
 // Language-specific description generators

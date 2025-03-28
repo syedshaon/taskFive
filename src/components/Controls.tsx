@@ -51,35 +51,38 @@ export default function Controls() {
 
   return (
     <Card className="p-3 mb-3">
-      <CardContent className="flex flex-wrap gap-4 items-center">
+      <CardContent className="flex flex-wrap gap-4 items-center justify-center md:justify-start">
+        <div className="flex items-center gap-2">
+          {/* Region Select */}
+          <Select
+            value={region}
+            onValueChange={(value) => {
+              console.log("Selected region:", value);
+              setRegion(value);
+            }}
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select a region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English (USA)</SelectItem>
+              <SelectItem value="es">Spanish (Spain)</SelectItem>
+              <SelectItem value="it">Italian (Italy)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Label htmlFor="seed-input" className="whitespace-nowrap">
+            Seed:
+          </Label>
+          <Input id="seed-input" type="number" value={seed} onChange={(e) => setSeed(parseInt(e.target.value) || 0)} className="w-24" placeholder="Random seed" />
+        </div>
         {/* Random Seed Button */}
         <Button onClick={() => setSeed(Math.floor(Math.random() * 100000))} variant="outline">
-          🔀 Random Seed
+          🔀 Randomize Seed
         </Button>
 
-        {/* Seed Input */}
-        <Input type="number" value={seed} onChange={(e) => setSeed(parseInt(e.target.value))} className="w-24" />
-
-        {/* Region Select */}
-        <Select
-          value={region}
-          onValueChange={(value) => {
-            console.log("Selected region:", value);
-            setRegion(value);
-          }}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Select a region" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English (USA)</SelectItem>
-            <SelectItem value="es">Spanish (Spain)</SelectItem>
-            <SelectItem value="it">Italian (Italy)</SelectItem>
-          </SelectContent>
-        </Select>
-
         {/* Likes Slider */}
-        <div className="flex flex-col lg:flex-row items-center gap-2 w-48 mx-3">
+        <div className="flex flex-col lg:flex-row items-center  gap-2 w-48 mx-3">
           <Label>Likes</Label>
           <Slider min={0} max={10} step={0.1} value={[likes]} onValueChange={(value) => setLikes(value[0])} />
         </div>
@@ -91,7 +94,7 @@ export default function Controls() {
         </div>
       </CardContent>
       {/* View Toggle */}
-      <div className="flex gap-2 ml-auto">
+      <div className="flex gap-2 md:ml-auto justify-center md:justify-end md:mt-0 mt-4">
         <Button variant="outline" onClick={handleExportCSV} className="gap-2 mr-5">
           <FaCloudDownloadAlt className="h-4 w-4" />
           Export CSV
