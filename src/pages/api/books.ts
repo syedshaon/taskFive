@@ -68,10 +68,10 @@ const generateAuthorName = (language: string): string => {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { seed, page, region, likes, reviews, isbn } = req.query;
 
-  console.log("Request Query:", req.query);
+  // console.log("Request Query:", req.query);
 
   const languageToGenerate = normalizeRegion(typeof region === "string" ? region : "");
-  console.log("Normalized Language:", normalizeRegion(languageToGenerate));
+  // console.log("Normalized Language:", normalizeRegion(languageToGenerate));
 
   // If an ISBN is provided, return details for that specific book
   if (isbn) {

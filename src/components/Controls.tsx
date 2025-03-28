@@ -57,7 +57,7 @@ export default function Controls() {
           <Select
             value={region}
             onValueChange={(value) => {
-              console.log("Selected region:", value);
+              // console.log("Selected region:", value);
               setRegion(value);
             }}
           >

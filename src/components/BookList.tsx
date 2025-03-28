@@ -93,7 +93,7 @@ export default function BookList() {
       if (!res.ok) throw new Error("Failed to fetch book details");
 
       const details = await res.json();
-      console.log("Details fetched..", details);
+      // console.log("Details fetched..", details);
       setBookDetails((prevDetails) => ({
         ...prevDetails,
         [isbn]: details,
